@@ -17,6 +17,7 @@ x-airflow-common:
     ZEFIX_PASSWORD: "${ZEFIX_PASSWORD}"
     ZEFIX_BASE_URL: "${ZEFIX_BASE_URL}"
     MLFLOW_TRACKING_URI: "${MLFLOW_TRACKING_URI}"
+    PYTHONPATH: "/opt/airflow/src"
   volumes:
     - ./dags:/opt/airflow/dags
     - ./src:/opt/airflow/src:ro
