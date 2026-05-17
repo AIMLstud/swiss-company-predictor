@@ -1,0 +1,38 @@
+[
+  {
+    "name": "A1 AUTO AG in Liquidation",
+    "ehraid": 437580,
+    "uid": "CHE107251578",
+    "chid": "CH10030216915",
+    "legalSeatId": 1094,
+    "legalSeat": "Nottwil",
+    "registryOfCommerceId": 100,
+    "status": "BEING_CANCELLED",
+    "sogcDate": "2026-03-24",
+    "deletionDate": null,
+    "legalForm": {
+      "id": 3,
+      "uid": "0106",
+      "name": {"de": "Aktiengesellschaft", "fr": "Société anonyme", "it": "Società anonima", "en": "Corporation"},
+      "shortName": {"de": "AG", "fr": "SA", "it": "SA", "en": "Ltd"}
+    }
+  },
+  {
+    "name": "A1 Automobile GmbH",
+    "ehraid": 1434117,
+    "uid": "CHE338108860",
+    "chid": "CH10048096209",
+    "legalSeatId": 1093,
+    "legalSeat": "Neuenkirch",
+    "registryOfCommerceId": 100,
+    "status": "ACTIVE",
+    "sogcDate": "2020-04-27",
+    "deletionDate": null,
+    "legalForm": {
+      "id": 4,
+      "uid": "0107",
+      "name": {"de": "Gesellschaft mit beschränkter Haftung", "fr": "Société à responsabilité limitée", "it": "Società a garanzia limitata", "en": "Limited Liability Company"},
+      "shortName": {"de": "GmbH", "fr": "Sàrl", "it": "Sagl", "en": "LLC"}
+    }
+  }
+]

@@ -1,0 +1,50 @@
+[
+  {
+    "name": "A1 AUTO AG in Liquidation",
+    "ehraid": 437580,
+    "uid": "CHE107251578",
+    "chid": "CH10030216915",
+    "legalSeatId": 1094,
+    "legalSeat": "Nottwil",
+    "registryOfCommerceId": 100,
+    "status": "BEING_CANCELLED",
+    "sogcDate": "2026-03-24",
+    "deletionDate": null,
+    "translation": null,
+    "purpose": "Handel mit und Import von Automobilen aller Art.",
+    "sogcPub": [],
+    "canton": "LU",
+    "capitalNominal": 100000,
+    "capitalCurrency": "CHF",
+    "headOffices": null,
+    "furtherHeadOffices": null,
+    "branchOffices": null,
+    "hasTakenOver": null,
+    "wasTakenOverBy": null,
+    "auditCompanies": null,
+    "oldNames": null,
+    "cantonalExcerptWeb": "https://lu.chregister.ch/cr-portal/auszug/auszug.xhtml?uid=CHE-107.251.578",
+    "legalForm": {
+      "id": 3,
+      "uid": "0106",
+      "name": {"de": "Aktiengesellschaft", "fr": "Société anonyme", "it": "Società anonima", "en": "Corporation"},
+      "shortName": {"de": "AG", "fr": "SA", "it": "SA", "en": "Ltd"}
+    },
+    "address": {
+      "organisation": "A1 AUTO AG in Liquidation",
+      "careOf": null,
+      "street": "Kantonsstrasse",
+      "houseNumber": "20",
+      "addon": null,
+      "poBox": null,
+      "city": "Nottwil",
+      "swissZipCode": "6207"
+    },
+    "zefixDetailWeb": {
+      "de": "https://www.zefix.admin.ch/de/search/entity/list?name=CHE107251578&directLink=true",
+      "fr": "https://www.zefix.admin.ch/fr/search/entity/list?name=CHE107251578&directLink=true",
+      "it": "https://www.zefix.admin.ch/it/search/entity/list?name=CHE107251578&directLink=true",
+      "en": "https://www.zefix.admin.ch/en/search/entity/list?name=CHE107251578&directLink=true"
+    }
+  }
+]
