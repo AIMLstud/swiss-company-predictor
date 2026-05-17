@@ -12,7 +12,7 @@ x-airflow-common:
     AIRFLOW__CORE__LOAD_EXAMPLES: "false"
     AIRFLOW__WEBSERVER__EXPOSE_CONFIG: "true"
     AIRFLOW__LOGGING__BASE_LOG_FOLDER: /opt/airflow/logs
-    APP_DB_URL: "${APP_DB_URL}"
+    APP_DB_URL: "postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/app"
     ZEFIX_USERNAME: "${ZEFIX_USERNAME}"
     ZEFIX_PASSWORD: "${ZEFIX_PASSWORD}"
     ZEFIX_BASE_URL: "${ZEFIX_BASE_URL}"
