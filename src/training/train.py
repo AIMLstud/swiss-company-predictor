@@ -120,7 +120,9 @@ def run_training(
         p50.fit(X_train, y_train)
         if len(X_val) > 0:
             mlflow.log_metric("p50_mae_val", mean_absolute_error(y_val, p50.predict(X_val)))
-        mlflow.xgboost.log_model(p50, name="model_p50")
+        model_uris: dict[str, str] = {
+            "model_uri_p50": mlflow.xgboost.log_model(p50, name="model_p50").model_uri,
+        }
 
         # ── p10 / p90: GBM quantile prediction intervals ──────────────────
         for quantile, alpha in [(10, 0.1), (90, 0.9)]:
@@ -131,6 +133,11 @@ def run_training(
                     f"p{quantile}_mae_val",
                     mean_absolute_error(y_val, q_model.predict(X_val)),
                 )
-            mlflow.sklearn.log_model(q_model, name=f"model_p{quantile}")
+            model_uris[f"model_uri_p{quantile}"] = mlflow.sklearn.log_model(
+                q_model, name=f"model_p{quantile}"
+            ).model_uri
+
+        # store model URIs as tags so predict.py can load them by run_id
+        mlflow.set_tags(model_uris)
 
     return run.info.run_id
