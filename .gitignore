@@ -1,0 +1,31 @@
+# Environment
+.env
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+.uv/
+
+# Type / lint caches
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+
+# macOS
+.DS_Store
+
+# MLflow
+mlruns/
+mlflow-artifacts/
+
+# Large data files (place manually, see README)
+tests/fixtures/260517_*.csv
+
+# IDE
+.vscode/
+.idea/
