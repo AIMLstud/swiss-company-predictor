@@ -7,4 +7,4 @@ WORKDIR /opt/airflow
 COPY --chown=airflow:root pyproject.toml ./
 COPY --chown=airflow:root src/ ./src/
 
-RUN pip install --no-cache-dir --user ".[scraper,features,training]"
+RUN pip install --no-cache-dir ".[scraper,features,training]"
