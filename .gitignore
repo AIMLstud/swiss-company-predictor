@@ -26,6 +26,9 @@ mlflow-artifacts/
 # Large data files (place manually, see README)
 tests/fixtures/260517_*.csv
 
+# Airflow
+dags/__pycache__/
+
 # IDE
 .vscode/
 .idea/

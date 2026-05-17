@@ -1,0 +1,13 @@
+{
+    "Servers": {
+        "1": {
+            "Name": "Swiss Company Predictor",
+            "Group": "Servers",
+            "Host": "postgres",
+            "Port": 5432,
+            "MaintenanceDB": "app",
+            "Username": "swiss",
+            "SSLMode": "prefer"
+        }
+    }
+}
