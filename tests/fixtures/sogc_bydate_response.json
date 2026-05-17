@@ -1,0 +1,129 @@
+[
+  {
+    "sogcPublication": {
+      "sogcDate": "2026-05-15",
+      "sogcId": 1006651271,
+      "registryOfCommerceId": 100,
+      "registryOfCommerceCanton": "LU",
+      "registryOfCommerceJournalId": 4616,
+      "registryOfCommerceJournalDate": "2026-05-11",
+      "message": "<FT TYPE=\"N\">Ablauf-Profi Fenk</FT>",
+      "mutationTypes": [
+        {"id": 1, "key": "status"},
+        {"id": 2, "key": "status.neu"}
+      ]
+    },
+    "companyShort": {
+      "name": "Ablauf-Profi Fenk",
+      "ehraid": 1749365,
+      "uid": "CHE319270603",
+      "chid": "CH10018236768",
+      "legalSeatId": 1008,
+      "legalSeat": "Schüpfheim",
+      "registryOfCommerceId": 100,
+      "legalForm": {
+        "id": 1, "uid": "0101",
+        "name": {"de": "Einzelunternehmen", "fr": "Entreprise individuelle", "it": "Ditta individuale", "en": "Sole proprietorship"},
+        "shortName": {"de": "EIU", "fr": "EI", "it": "IPI", "en": "SP"}
+      },
+      "status": "ACTIVE",
+      "sogcDate": "2026-05-15",
+      "deletionDate": null
+    }
+  },
+  {
+    "sogcPublication": {
+      "sogcDate": "2026-05-15",
+      "sogcId": 1006651272,
+      "registryOfCommerceId": 100,
+      "registryOfCommerceCanton": "LU",
+      "registryOfCommerceJournalId": 4617,
+      "registryOfCommerceJournalDate": "2026-05-11",
+      "message": "<FT TYPE=\"N\">BLG GLOBAL AG</FT>",
+      "mutationTypes": [
+        {"id": 1, "key": "status"},
+        {"id": 2, "key": "status.neu"}
+      ]
+    },
+    "companyShort": {
+      "name": "BLG GLOBAL AG",
+      "ehraid": 1749366,
+      "uid": "CHE144292498",
+      "chid": "CH10038236704",
+      "legalSeatId": 1061,
+      "legalSeat": "Luzern",
+      "registryOfCommerceId": 100,
+      "legalForm": {
+        "id": 3, "uid": "0106",
+        "name": {"de": "Aktiengesellschaft", "fr": "Société anonyme", "it": "Società anonima", "en": "Corporation"},
+        "shortName": {"de": "AG", "fr": "SA", "it": "SA", "en": "Ltd"}
+      },
+      "status": "ACTIVE",
+      "sogcDate": "2026-05-15",
+      "deletionDate": null
+    }
+  },
+  {
+    "sogcPublication": {
+      "sogcDate": "2026-05-15",
+      "sogcId": 1006651218,
+      "registryOfCommerceId": 36,
+      "registryOfCommerceCanton": "BE",
+      "registryOfCommerceJournalId": 9057,
+      "registryOfCommerceJournalDate": "2026-05-11",
+      "message": "<FT TYPE=\"N\">1899 Architekten AG</FT>",
+      "mutationTypes": [
+        {"id": 1, "key": "status"},
+        {"id": 2, "key": "status.neu"}
+      ]
+    },
+    "companyShort": {
+      "name": "1899 Architekten AG",
+      "ehraid": 856774,
+      "uid": "CHE999999901",
+      "chid": "CH99999999999",
+      "legalSeatId": 351,
+      "legalSeat": "Bern",
+      "registryOfCommerceId": 36,
+      "legalForm": {
+        "id": 3, "uid": "0106",
+        "name": {"de": "Aktiengesellschaft", "fr": "Société anonyme", "it": "Società anonima", "en": "Corporation"},
+        "shortName": {"de": "AG", "fr": "SA", "it": "SA", "en": "Ltd"}
+      },
+      "status": "ACTIVE",
+      "sogcDate": "2026-05-15",
+      "deletionDate": null
+    }
+  },
+  {
+    "sogcPublication": {
+      "sogcDate": "2026-05-15",
+      "sogcId": 1006651300,
+      "registryOfCommerceId": 100,
+      "registryOfCommerceCanton": "LU",
+      "registryOfCommerceJournalId": 4700,
+      "registryOfCommerceJournalDate": "2026-05-11",
+      "message": "<FT TYPE=\"F\">Some LU GmbH</FT>",
+      "mutationTypes": [
+        {"id": 16, "key": "adressaenderung"}
+      ]
+    },
+    "companyShort": {
+      "name": "Some LU GmbH",
+      "ehraid": 1234567,
+      "uid": "CHE888888801",
+      "chid": "CH10099999999",
+      "legalSeatId": 1061,
+      "legalSeat": "Luzern",
+      "registryOfCommerceId": 100,
+      "legalForm": {
+        "id": 4, "uid": "0107",
+        "name": {"de": "Gesellschaft mit beschränkter Haftung", "fr": "Société à responsabilité limitée", "it": "Società a garanzia limitata", "en": "Limited Liability Company"},
+        "shortName": {"de": "GmbH", "fr": "Sàrl", "it": "Sagl", "en": "LLC"}
+      },
+      "status": "ACTIVE",
+      "sogcDate": "2026-05-15",
+      "deletionDate": null
+    }
+  }
+]
