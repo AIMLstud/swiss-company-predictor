@@ -107,6 +107,5 @@ def test_run_training_logs_three_models(tmp_path) -> None:
     )
 
     client = mlflow.MlflowClient(tracking_uri=tracking_uri)
-    exp_id = client.get_run(run_id).info.experiment_id
-    logged = {m.name for m in client.search_logged_models([exp_id])}
-    assert {"model_p50", "model_p10", "model_p90"} == logged
+    tags = client.get_run(run_id).data.tags
+    assert {"model_uri_p50", "model_uri_p10", "model_uri_p90"} <= tags.keys()
