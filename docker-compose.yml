@@ -143,6 +143,8 @@ services:
     environment:
       APP_DB_URL: "${APP_DB_URL}"
       MLFLOW_TRACKING_URI: "${MLFLOW_TRACKING_URI}"
+      ZEFIX_USERNAME: "${ZEFIX_USERNAME}"
+      ZEFIX_PASSWORD: "${ZEFIX_PASSWORD}"
     ports:
       - "8501:8501"
     depends_on:
