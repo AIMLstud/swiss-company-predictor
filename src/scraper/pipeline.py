@@ -66,7 +66,7 @@ def _row_from_zefix(company: dict[str, Any]) -> dict[str, Any]:
         "uid": company.get("uid", ""),
         "name": company.get("name", ""),
         "legalform_id": lf.get("id"),
-        "legalform_short": lf.get("shortName"),
+        "legalform_short": (lf.get("shortName") or {}).get("de") if isinstance(lf.get("shortName"), dict) else lf.get("shortName"),
         "status": company.get("status"),
         "canton": company.get("canton"),
         "cantonal_excerpt_web": company.get("cantonalExcerptWeb"),
