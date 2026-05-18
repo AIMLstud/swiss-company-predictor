@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import tempfile
+
 import numpy as np
 import pandas as pd
 
@@ -119,9 +121,14 @@ def run_training(
         p50.fit(X_train, y_train)
         if len(X_val) > 0:
             mlflow.log_metric("p50_mae_val", mean_absolute_error(y_val, p50.predict(X_val)))
-        model_uris: dict[str, str] = {
-            "model_uri_p50": mlflow.xgboost.log_model(p50, artifact_path="model_p50").model_uri,
-        }
+
+        run_id = run.info.run_id
+        model_uris: dict[str, str] = {}
+
+        with tempfile.TemporaryDirectory() as tmp:
+            mlflow.xgboost.save_model(p50, tmp)
+            mlflow.log_artifacts(tmp, artifact_path="model_p50")
+        model_uris["model_uri_p50"] = f"runs:/{run_id}/model_p50"
 
         # ── p10 / p90: GBM quantile prediction intervals ──────────────────
         for quantile, alpha in [(10, 0.1), (90, 0.9)]:
@@ -132,9 +139,10 @@ def run_training(
                     f"p{quantile}_mae_val",
                     mean_absolute_error(y_val, q_model.predict(X_val)),
                 )
-            model_uris[f"model_uri_p{quantile}"] = mlflow.sklearn.log_model(
-                q_model, artifact_path=f"model_p{quantile}"
-            ).model_uri
+            with tempfile.TemporaryDirectory() as tmp:
+                mlflow.sklearn.save_model(q_model, tmp)
+                mlflow.log_artifacts(tmp, artifact_path=f"model_p{quantile}")
+            model_uris[f"model_uri_p{quantile}"] = f"runs:/{run_id}/model_p{quantile}"
 
         # store model URIs as tags so predict.py can load them by run_id
         mlflow.set_tags(model_uris)
