@@ -7,4 +7,4 @@ exec mlflow server \
     --artifacts-destination "${MLFLOW_DEFAULT_ARTIFACT_ROOT:-/mlflow/artifacts}" \
     --default-artifact-root "mlflow-artifacts:/" \
     --serve-artifacts \
-    --allowed-hosts "mlflow,mlflow:5000,localhost,localhost:5000,localhost:5001,127.0.0.1,127.0.0.1:5000,127.0.0.1:5001"
+    --allowed-hosts "${MLFLOW_ALLOWED_HOSTS:-localhost}"
