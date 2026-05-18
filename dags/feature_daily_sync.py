@@ -13,7 +13,7 @@ from airflow.decorators import dag, task
 
 @dag(
     dag_id="feature_daily_sync",
-    schedule="@daily",
+    schedule="0 20 * * *",
     start_date=datetime(2026, 5, 1),
     catchup=False,
     max_active_runs=1,
