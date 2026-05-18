@@ -31,15 +31,19 @@ _GBM_PARAMS: dict = {
 
 def load_data() -> pd.DataFrame:
     """Load company + eintragsdatum from raw schema (requires live DB)."""
+    from sqlalchemy import text
+
     from common.db import get_engine
 
-    sql = """
+    sql = text("""
         SELECT c.uid, e.eintragsdatum, c.legalform_short
         FROM raw.companies c
         JOIN raw.company_eintragsdatum e ON c.uid = e.uid
         WHERE e.scraping_status = 'ok'
-    """
-    return pd.read_sql(sql, get_engine())
+    """)
+    with get_engine().connect() as conn:
+        result = conn.execute(sql)
+        return pd.DataFrame(result.fetchall(), columns=list(result.keys()))
 
 
 def run_training(
