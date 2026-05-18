@@ -39,8 +39,7 @@ def load_data() -> pd.DataFrame:
         JOIN raw.company_eintragsdatum e ON c.uid = e.uid
         WHERE e.scraping_status = 'ok'
     """
-    with get_engine().connect() as conn:
-        return pd.read_sql(sql, conn)
+    return pd.read_sql(sql, get_engine())
 
 
 def run_training(
