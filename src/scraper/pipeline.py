@@ -28,7 +28,7 @@ _UPSERT_COMPANY = text("""
         cantonal_excerpt_web, raw_search, last_updated_at
     ) VALUES (
         :uid, :name, :legalform_id, :legalform_short, :status, :canton,
-        :cantonal_excerpt_web, :raw_search::jsonb, now()
+        :cantonal_excerpt_web, CAST(:raw_search AS jsonb), now()
     )
     ON CONFLICT (uid) DO UPDATE SET
         name               = EXCLUDED.name,
