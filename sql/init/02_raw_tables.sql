@@ -24,18 +24,3 @@ CREATE TABLE IF NOT EXISTS raw.company_eintragsdatum (
     scraping_status TEXT        NOT NULL,   -- success | viewstate_missing | regex_no_match | http_error | timeout | csv_import
     scraped_at      TIMESTAMPTZ NOT NULL DEFAULT now()
 );
-
--- ── raw.sogc_publications ─────────────────────────────────────────────────────
--- One row per SOGC publication entry. Used only to identify new LU registrations;
--- the uid column is the key used downstream.
-CREATE TABLE IF NOT EXISTS raw.sogc_publications (
-    publication_id  BIGINT      PRIMARY KEY,   -- sogcPublication.sogcId
-    sogc_date       DATE        NOT NULL,
-    canton          TEXT        NOT NULL,
-    uid             TEXT,
-    mutation_types  JSONB,
-    created_at      TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
-CREATE INDEX IF NOT EXISTS idx_sogc_publications_sogc_date
-    ON raw.sogc_publications (sogc_date);
