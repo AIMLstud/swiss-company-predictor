@@ -4,7 +4,7 @@ Predicts the number of new company registrations per calendar week in Canton Luc
 
 Data source: [Zefix REST API](https://www.zefix.admin.ch/ZefixPublicREST/) + Cantonal Commercial Register (HR-Auszug).
 
-[![CI](https://github.com/<your-org>/swiss-company-predictor/actions/workflows/ci.yml/badge.svg)](https://github.com/<your-org>/swiss-company-predictor/actions/workflows/ci.yml)
+[![CI](https://github.com/AIMLstud/swiss-company-predictor/actions/workflows/ci.yml/badge.svg)](https://github.com/AIMLstud/swiss-company-predictor/actions/workflows/ci.yml)
 
 ---
 
@@ -73,7 +73,7 @@ docker compose up -d
 | Service   | URL                    |
 |-----------|------------------------|
 | Airflow   | http://localhost:8080  |
-| MLflow    | http://localhost:5001  |
+| MLflow    | http://localhost:5000  |
 | pgAdmin   | http://localhost:5050  |
 | Streamlit | http://localhost:8501  |
 
