@@ -10,6 +10,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 
 from common.config import get_settings
+from common.http import call_with_retry
 
 
 def _auth() -> HTTPBasicAuth:
@@ -22,17 +23,19 @@ def _json_headers() -> dict[str, str]:
 
 
 def _post_search(payload: dict[str, Any], timeout: int = 30) -> list[dict[str, Any]]:
-    s = get_settings()
-    resp = requests.post(
-        f"{s.zefix_base_url}/company/search",
-        auth=_auth(),
-        headers=_json_headers(),
-        json=payload,
-        timeout=timeout,
-    )
-    resp.raise_for_status()
-    data: Any = resp.json()
-    return data if isinstance(data, list) else data.get("list", [])
+    def _call() -> list[dict[str, Any]]:
+        s = get_settings()
+        resp = requests.post(
+            f"{s.zefix_base_url}/company/search",
+            auth=_auth(),
+            headers=_json_headers(),
+            json=payload,
+            timeout=timeout,
+        )
+        resp.raise_for_status()
+        data: Any = resp.json()
+        return data if isinstance(data, list) else data.get("list", [])
+    return call_with_retry(_call)
 
 
 def search_by_name_prefix(
@@ -63,13 +66,15 @@ def search_by_uid(
 
 def fetch_detail(uid: str, timeout: int = 30) -> list[dict[str, Any]]:
     """GET /company/uid/{uid}. Wraps a single-dict response in a list."""
-    s = get_settings()
-    resp = requests.get(
-        f"{s.zefix_base_url}/company/uid/{uid}",
-        auth=_auth(),
-        headers={"Accept": "application/json"},
-        timeout=timeout,
-    )
-    resp.raise_for_status()
-    data: Any = resp.json()
-    return data if isinstance(data, list) else [data]
+    def _call() -> list[dict[str, Any]]:
+        s = get_settings()
+        resp = requests.get(
+            f"{s.zefix_base_url}/company/uid/{uid}",
+            auth=_auth(),
+            headers={"Accept": "application/json"},
+            timeout=timeout,
+        )
+        resp.raise_for_status()
+        data: Any = resp.json()
+        return data if isinstance(data, list) else [data]
+    return call_with_retry(_call)

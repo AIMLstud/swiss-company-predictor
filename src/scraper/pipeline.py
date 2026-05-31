@@ -16,9 +16,12 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from common.config import Settings, get_settings
+from common.logging import get_logger
 from scraper.hr_scraper import ViewStateMissingError, scrape_with_retry
 from scraper.sogc_client import fetch_publications_by_date, filter_new_entries_for_canton
 from scraper.zefix_client import fetch_detail, search_by_name_prefix
+
+_log = get_logger(__name__)
 
 _PREFIXES: list[str] = [chr(c) for c in range(ord("A"), ord("Z") + 1)]
 
@@ -106,6 +109,7 @@ def stage2_scrape_eintragsdatum(
     """
     cfg = settings or get_settings()
     rows = session.execute(_SELECT_PENDING).fetchall()
+    _log.info("Found %d companies pending eintragsdatum scraping", len(rows))
 
     counts: dict[str, int] = {
         "ok": 0, "no_date": 0, "no_url": 0,
@@ -138,6 +142,7 @@ def stage2_scrape_eintragsdatum(
         })
         counts[status] += 1
 
+    _log.info("Scraping complete: %s", counts)
     return counts
 
 
@@ -154,7 +159,9 @@ def stage3_daily_sync(
     """
     cfg = settings or get_settings()
     publications = fetch_publications_by_date(d)
+    _log.info("Fetched %d SOGC publications for %s", len(publications), d)
     new_uids = filter_new_entries_for_canton(publications, canton)
+    _log.info("Found %d new %s registrations to upsert", len(new_uids), canton)
 
     count = 0
     for uid in new_uids:
@@ -163,4 +170,6 @@ def stage3_daily_sync(
             session.execute(_UPSERT_COMPANY, _row_from_zefix(company))
             count += 1
         _sleep(cfg.zefix_sleep_between)
+
+    _log.info("Upserted %d companies into raw.companies", count)
     return count

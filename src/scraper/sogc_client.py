@@ -11,20 +11,23 @@ import requests
 from requests.auth import HTTPBasicAuth
 
 from common.config import get_settings
+from common.http import call_with_retry
 
 
 def fetch_publications_by_date(d: date, timeout: int = 30) -> list[dict[str, Any]]:
     """GET /sogc/bydate/{date} – all SOGC publications for that date (CH-wide)."""
-    s = get_settings()
-    resp = requests.get(
-        f"{s.zefix_base_url}/sogc/bydate/{d.isoformat()}",
-        auth=HTTPBasicAuth(s.zefix_username, s.zefix_password),
-        headers={"Accept": "application/json"},
-        timeout=timeout,
-    )
-    resp.raise_for_status()
-    data: Any = resp.json()
-    return data if isinstance(data, list) else data.get("list", [])
+    def _call() -> list[dict[str, Any]]:
+        s = get_settings()
+        resp = requests.get(
+            f"{s.zefix_base_url}/sogc/bydate/{d.isoformat()}",
+            auth=HTTPBasicAuth(s.zefix_username, s.zefix_password),
+            headers={"Accept": "application/json"},
+            timeout=timeout,
+        )
+        resp.raise_for_status()
+        data: Any = resp.json()
+        return data if isinstance(data, list) else data.get("list", [])
+    return call_with_retry(_call)
 
 
 def filter_new_entries_for_canton(
