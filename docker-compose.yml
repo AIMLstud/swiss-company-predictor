@@ -80,7 +80,7 @@ services:
     environment:
       MLFLOW_BACKEND_STORE_URI: "postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/mlflow"
       MLFLOW_DEFAULT_ARTIFACT_ROOT: /mlflow/artifacts
-      MLFLOW_ALLOWED_HOSTS: "mlflow,mlflow:5000,localhost,localhost:5000,127.0.0.1,127.0.0.1:5000"
+      MLFLOW_ALLOWED_HOSTS: "mlflow,mlflow:5000,localhost,localhost:5000,127.0.0.1,127.0.0.1:5000,mlflow.swiss-company-predictor.ch"
     volumes:
       - mlflow_artifacts:/mlflow/artifacts
     ports:
