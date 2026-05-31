@@ -90,11 +90,13 @@ def stage1_full_sync(
     cfg = settings or get_settings()
     total = 0
     for prefix in _PREFIXES:
-        results = search_by_name_prefix(prefix, canton=canton, active_only=False)
-        for company in results:
-            session.execute(_UPSERT_COMPANY, _row_from_zefix(company))
-            total += 1
+        results = search_by_name_prefix(prefix, canton=canton, active_only=True)
         _sleep(cfg.zefix_sleep_between)
+        for company in results:
+            for detail in fetch_detail(company["uid"]):
+                session.execute(_UPSERT_COMPANY, _row_from_zefix(detail))
+                total += 1
+            _sleep(cfg.zefix_sleep_between)
     return total
 
 

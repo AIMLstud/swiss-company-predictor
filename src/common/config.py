@@ -23,7 +23,7 @@ class Settings(BaseSettings):
 
     # ── Pipeline knobs ────────────────────────────────────────────────────────
     zefix_canton: str = "LU"
-    zefix_sleep_between: float = 0.3   # seconds between Zefix API calls
+    zefix_sleep_between: float = 0.1   # seconds between Zefix API calls
     hr_sleep_between: float = 0.2      # seconds between HR-Auszug calls
     hr_concurrency: int = 4            # parallel HR scraping workers
     hr_max_retries: int = 3            # retries on transient errors
