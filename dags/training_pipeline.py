@@ -18,10 +18,8 @@ from airflow.decorators import dag, task
     catchup=False,
     max_active_runs=1,
     params={
-        "val_start_year":  2025,
-        "val_start_week":  1,
-        "test_start_year": 2026,
-        "test_start_week": 1,
+        "val_weeks":       52,
+        "test_weeks":      4,
         "experiment_name": "swiss_company_predictor",
     },
     tags=["training"],
@@ -52,18 +50,28 @@ def training_pipeline() -> None:
     @task()
     def train_models(data_check: dict) -> dict:
         """Build feature matrix from DB, train p10/p50/p90 models, log to MLflow."""
+        from datetime import date
+
         from airflow.operators.python import get_current_context
 
+        from training.split import rolling_boundaries
         from training.train import run_training
 
-        params = get_current_context()["params"]
+        ctx    = get_current_context()
+        params = ctx["params"]
+
+        val_start, test_start = rolling_boundaries(
+            reference=date.fromisoformat(ctx["ds"]),
+            val_weeks=params["val_weeks"],
+            test_weeks=params["test_weeks"],
+        )
 
         run_id = run_training(
-            val_start=(params["val_start_year"], params["val_start_week"]),
-            test_start=(params["test_start_year"], params["test_start_week"]),
+            val_start=val_start,
+            test_start=test_start,
             experiment_name=params["experiment_name"],
         )
-        return {"run_id": run_id, **data_check}
+        return {"run_id": run_id, "val_start": val_start, "test_start": test_start, **data_check}
 
     train_models(check_data_availability())
 

@@ -1,8 +1,27 @@
 """Temporal train / val / test splitting for the weekly feature matrix."""
 
+from datetime import date, timedelta
 from typing import NamedTuple
 
 import pandas as pd
+
+
+def rolling_boundaries(
+    reference: date,
+    val_weeks: int = 52,
+    test_weeks: int = 4,
+) -> tuple[tuple[int, int], tuple[int, int]]:
+    """Return (val_start, test_start) as ISO (year, week) tuples relative to reference.
+
+    test  = most recent test_weeks weeks ending at reference
+    val   = val_weeks weeks immediately before test
+    train = everything before val (grows automatically as new data arrives)
+    """
+    test_start_date = reference - timedelta(weeks=test_weeks)
+    val_start_date  = test_start_date - timedelta(weeks=val_weeks)
+    tc = test_start_date.isocalendar()
+    vc = val_start_date.isocalendar()
+    return (vc.year, vc.week), (tc.year, tc.week)
 
 
 class Split(NamedTuple):
