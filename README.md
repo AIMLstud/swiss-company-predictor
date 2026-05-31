@@ -85,6 +85,8 @@ docker compose up -d
 | pgAdmin   | http://localhost:5050  | admin@local.dev / admin |
 | Streamlit | http://localhost:8501  | —                 |
 
+> **macOS users:** AirPlay Receiver occupies port 5000 by default, which prevents MLflow from starting. Disable it under **System Settings → General → AirDrop & Handoff → AirPlay Receiver**.
+
 ### Seeding historical data (optional, recommended)
 
 Running the live backfill scrapes ~35k companies from HR-Auszug and takes ~8h.
