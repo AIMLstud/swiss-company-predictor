@@ -65,17 +65,25 @@ Three models are trained in each weekly run and stored in MLflow:
 
 ```bash
 cp .env.example .env
-# Fill in ZEFIX_USERNAME, ZEFIX_PASSWORD, AIRFLOW__CORE__FERNET_KEY
+```
 
+Open `.env` and fill in the three required values:
+- `ZEFIX_USERNAME` / `ZEFIX_PASSWORD` — your Zefix API credentials
+- `AIRFLOW__CORE__FERNET_KEY` — generate one with:
+  ```bash
+  python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+  ```
+
+```bash
 docker compose up -d
 ```
 
-| Service   | URL                    |
-|-----------|------------------------|
-| Airflow   | http://localhost:8080  |
-| MLflow    | http://localhost:5000  |
-| pgAdmin   | http://localhost:5050  |
-| Streamlit | http://localhost:8501  |
+| Service   | URL                    | Default login     |
+|-----------|------------------------|-------------------|
+| Airflow   | http://localhost:8080  | admin / admin     |
+| MLflow    | http://localhost:5000  | —                 |
+| pgAdmin   | http://localhost:5050  | admin@local.dev / admin |
+| Streamlit | http://localhost:8501  | —                 |
 
 ### Seeding historical data (optional, recommended)
 
@@ -93,7 +101,7 @@ The `feature_backfill` DAG detects this file and loads it directly.
 1. **Trigger `feature_backfill`** (manual, once) in the Airflow UI.
 2. Wait for completion – Airflow will turn green.
 3. `feature_daily_sync` runs automatically from that point on.
-4. `training_pipeline` runs every Monday; trigger it manually for the first model.
+4. `training_pipeline` runs every Sunday midnight (@weekly); trigger it manually for the first model.
 5. Open Streamlit at http://localhost:8501 to see predictions.
 
 ---
