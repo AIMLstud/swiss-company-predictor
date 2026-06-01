@@ -68,6 +68,11 @@ target-version = "py312"
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "N", "SIM"]
 
+[tool.ruff.lint.per-file-ignores]
+"src/inference/predict.py" = ["N806"]
+"src/training/train.py" = ["N806"]
+"streamlit_app/app.py" = ["N806"]
+
 [tool.mypy]
 python_version = "3.12"
 strict = true

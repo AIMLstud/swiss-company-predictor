@@ -1,6 +1,6 @@
 from datetime import date
 from pathlib import Path
-from urllib.parse import parse_qs, unquote_plus
+from urllib.parse import parse_qs
 
 import pytest
 import requests
@@ -23,6 +23,7 @@ def html(name: str) -> str:
 
 # ── _parse_eintragsdatum (unit, no HTTP) ──────────────────────────────────────
 
+
 def test_parse_regex_match() -> None:
     text = "<span>Eingetragen am</span><span>07.09.1998</span>"
     assert _parse_eintragsdatum(text) == date(1998, 9, 7)
@@ -44,6 +45,7 @@ def test_parse_returns_none_when_no_date() -> None:
 
 
 # ── scrape_eintragsdatum_from_url ──────────────────────────────────────────────
+
 
 def test_scrape_returns_date() -> None:
     with rsps_lib.RequestsMock() as rsps:
@@ -75,7 +77,9 @@ def test_scrape_raises_viewstate_missing() -> None:
 def test_scrape_returns_none_when_date_not_in_ajax() -> None:
     with rsps_lib.RequestsMock() as rsps:
         rsps.add(rsps_lib.GET, HR_URL, body=html("hr_auszug_page.html"))
-        rsps.add(rsps_lib.POST, HR_URL, body="<partial-response><changes></changes></partial-response>")
+        rsps.add(
+            rsps_lib.POST, HR_URL, body="<partial-response><changes></changes></partial-response>"
+        )
         result = scrape_eintragsdatum_from_url(HR_URL)
     assert result is None
 
@@ -100,6 +104,7 @@ def test_scrape_returns_none_for_empty_url() -> None:
 
 
 # ── scrape_with_retry ─────────────────────────────────────────────────────────
+
 
 def test_retry_succeeds_after_one_timeout() -> None:
     sleep_calls: list[float] = []

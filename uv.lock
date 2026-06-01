@@ -2854,7 +2854,9 @@ streamlit-app = [
     { name = "mlflow" },
     { name = "pandas" },
     { name = "plotly" },
+    { name = "scikit-learn" },
     { name = "streamlit" },
+    { name = "xgboost" },
 ]
 training = [
     { name = "mlflow" },
@@ -2887,11 +2889,13 @@ requires-dist = [
     { name = "requests", marker = "extra == 'scraper'", specifier = ">=2.32" },
     { name = "responses", marker = "extra == 'dev'", specifier = ">=0.25" },
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.8" },
+    { name = "scikit-learn", marker = "extra == 'streamlit-app'", specifier = ">=1.5" },
     { name = "scikit-learn", marker = "extra == 'training'", specifier = ">=1.5" },
     { name = "sqlalchemy", specifier = ">=2.0" },
     { name = "streamlit", marker = "extra == 'streamlit-app'", specifier = ">=1.40" },
     { name = "types-beautifulsoup4", marker = "extra == 'dev'", specifier = ">=4.12" },
     { name = "types-requests", marker = "extra == 'dev'", specifier = ">=2.32" },
+    { name = "xgboost", marker = "extra == 'streamlit-app'", specifier = ">=2.1" },
     { name = "xgboost", marker = "extra == 'training'", specifier = ">=2.1" },
 ]
 provides-extras = ["scraper", "features", "training", "streamlit-app", "dev"]

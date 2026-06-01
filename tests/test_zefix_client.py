@@ -26,6 +26,7 @@ def zefix_env(monkeypatch: pytest.MonkeyPatch) -> None:
 
 # ── search_by_name_prefix ─────────────────────────────────────────────────────
 
+
 def test_search_by_prefix_returns_results() -> None:
     fixture = load("zefix_search_response.json")
     with rsps_lib.RequestsMock() as rsps:
@@ -72,6 +73,7 @@ def test_search_raises_on_http_error() -> None:
 
 # ── search_by_uid ─────────────────────────────────────────────────────────────
 
+
 def test_search_by_uid_sends_uid_without_wildcard() -> None:
     with rsps_lib.RequestsMock() as rsps:
         rsps.add(rsps_lib.POST, SEARCH_URL, json=[])
@@ -91,6 +93,7 @@ def test_search_by_uid_returns_results() -> None:
 
 
 # ── fetch_detail ──────────────────────────────────────────────────────────────
+
 
 def test_fetch_detail_returns_list() -> None:
     fixture = load("zefix_detail_response.json")

@@ -69,7 +69,11 @@ def _row_from_zefix(company: dict[str, Any]) -> dict[str, Any]:
         "uid": company.get("uid", ""),
         "name": company.get("name", ""),
         "legalform_id": lf.get("id"),
-        "legalform_short": (lf.get("shortName") or {}).get("de") if isinstance(lf.get("shortName"), dict) else lf.get("shortName"),
+        "legalform_short": (
+            (lf.get("shortName") or {}).get("de")
+            if isinstance(lf.get("shortName"), dict)
+            else lf.get("shortName")
+        ),
         "status": company.get("status"),
         "canton": company.get("canton"),
         "cantonal_excerpt_web": company.get("cantonalExcerptWeb"),
@@ -114,8 +118,13 @@ def stage2_scrape_eintragsdatum(
     _log.info("Found %d companies pending eintragsdatum scraping", len(rows))
 
     counts: dict[str, int] = {
-        "ok": 0, "no_date": 0, "no_url": 0,
-        "viewstate_missing": 0, "http_error": 0, "timeout": 0, "error": 0,
+        "ok": 0,
+        "no_date": 0,
+        "no_url": 0,
+        "viewstate_missing": 0,
+        "http_error": 0,
+        "timeout": 0,
+        "error": 0,
     }
 
     for uid, url in rows:
@@ -137,11 +146,14 @@ def stage2_scrape_eintragsdatum(
                 status = "error"
             _sleep(cfg.hr_sleep_between)
 
-        session.execute(_UPSERT_EINTRAGSDATUM, {
-            "uid": uid,
-            "eintragsdatum": eintragsdatum,
-            "scraping_status": status,
-        })
+        session.execute(
+            _UPSERT_EINTRAGSDATUM,
+            {
+                "uid": uid,
+                "eintragsdatum": eintragsdatum,
+                "scraping_status": status,
+            },
+        )
         counts[status] += 1
 
     _log.info("Scraping complete: %s", counts)

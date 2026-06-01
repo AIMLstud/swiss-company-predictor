@@ -27,6 +27,7 @@ def zefix_env(monkeypatch: pytest.MonkeyPatch) -> None:
 
 # ── fetch_publications_by_date ────────────────────────────────────────────────
 
+
 def test_fetch_returns_list() -> None:
     fixture = load("sogc_bydate_response.json")
     with rsps_lib.RequestsMock() as rsps:
@@ -58,6 +59,7 @@ def test_fetch_raises_on_http_error() -> None:
 
 
 # ── filter_new_entries_for_canton ─────────────────────────────────────────────
+
 
 def test_filter_returns_lu_new_uids() -> None:
     fixture = load("sogc_bydate_response.json")

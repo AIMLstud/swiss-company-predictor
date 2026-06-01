@@ -4,6 +4,7 @@ from scraper.uid_format import compact_to_formatted, formatted_to_compact
 
 # ── compact_to_formatted ──────────────────────────────────────────────────────
 
+
 def test_compact_to_formatted_known() -> None:
     assert compact_to_formatted("CHE107251578") == "CHE-107.251.578"
 
@@ -14,7 +15,7 @@ def test_compact_to_formatted_another() -> None:
 
 def test_compact_to_formatted_invalid_raises() -> None:
     with pytest.raises(ValueError):
-        compact_to_formatted("CHE-107.251.578")   # already formatted
+        compact_to_formatted("CHE-107.251.578")  # already formatted
 
 
 def test_compact_to_formatted_garbage_raises() -> None:
@@ -23,6 +24,7 @@ def test_compact_to_formatted_garbage_raises() -> None:
 
 
 # ── formatted_to_compact ──────────────────────────────────────────────────────
+
 
 def test_formatted_to_compact_known() -> None:
     assert formatted_to_compact("CHE-107.251.578") == "CHE107251578"
@@ -34,7 +36,7 @@ def test_formatted_to_compact_another() -> None:
 
 def test_formatted_to_compact_invalid_raises() -> None:
     with pytest.raises(ValueError):
-        formatted_to_compact("CHE107251578")   # already compact
+        formatted_to_compact("CHE107251578")  # already compact
 
 
 def test_formatted_to_compact_garbage_raises() -> None:
@@ -44,11 +46,15 @@ def test_formatted_to_compact_garbage_raises() -> None:
 
 # ── roundtrip ────────────────────────────────────────────────────────────────
 
-@pytest.mark.parametrize("compact", [
-    "CHE107251578",
-    "CHE338108860",
-    "CHE000000001",
-    "CHE999999999",
-])
+
+@pytest.mark.parametrize(
+    "compact",
+    [
+        "CHE107251578",
+        "CHE338108860",
+        "CHE000000001",
+        "CHE999999999",
+    ],
+)
 def test_roundtrip(compact: str) -> None:
     assert formatted_to_compact(compact_to_formatted(compact)) == compact

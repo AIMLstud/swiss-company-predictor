@@ -35,6 +35,7 @@ def _post_search(payload: dict[str, Any], timeout: int = 30) -> list[dict[str, A
         resp.raise_for_status()
         data: Any = resp.json()
         return data if isinstance(data, list) else data.get("list", [])
+
     return call_with_retry(_call)
 
 
@@ -66,6 +67,7 @@ def search_by_uid(
 
 def fetch_detail(uid: str, timeout: int = 30) -> list[dict[str, Any]]:
     """GET /company/uid/{uid}. Wraps a single-dict response in a list."""
+
     def _call() -> list[dict[str, Any]]:
         s = get_settings()
         resp = requests.get(
@@ -77,4 +79,5 @@ def fetch_detail(uid: str, timeout: int = 30) -> list[dict[str, Any]]:
         resp.raise_for_status()
         data: Any = resp.json()
         return data if isinstance(data, list) else [data]
+
     return call_with_retry(_call)

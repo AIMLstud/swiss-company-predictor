@@ -20,13 +20,15 @@ def _weekly(n: int) -> pd.DataFrame:
     for i in range(n):
         d = start + timedelta(weeks=i)
         iso = d.isocalendar()
-        rows.append({
-            "iso_year":       iso.year,
-            "iso_week":       iso.week,
-            "n_registrations": 5 + i % 8,
-            "ag_share":       0.6,
-            "gmbh_share":     0.4,
-        })
+        rows.append(
+            {
+                "iso_year": iso.year,
+                "iso_week": iso.week,
+                "n_registrations": 5 + i % 8,
+                "ag_share": 0.6,
+                "gmbh_share": 0.4,
+            }
+        )
     return pd.DataFrame(rows)
 
 
@@ -43,6 +45,7 @@ def _synthetic_raw(n: int = 120) -> pd.DataFrame:
 
 # ── _build_feature_row ────────────────────────────────────────────────────────
 
+
 def test_build_feature_row_lag_values() -> None:
     weekly = _weekly(60)
     # target = week after the last row; preceding = all 60 rows
@@ -54,8 +57,8 @@ def test_build_feature_row_lag_values() -> None:
         target_year += 1
 
     row = _build_feature_row(weekly, target_year, target_week)
-    assert row.iloc[0]["lag_1"]  == weekly["n_registrations"].iloc[-1]
-    assert row.iloc[0]["lag_4"]  == weekly["n_registrations"].iloc[-4]
+    assert row.iloc[0]["lag_1"] == weekly["n_registrations"].iloc[-1]
+    assert row.iloc[0]["lag_4"] == weekly["n_registrations"].iloc[-4]
     assert row.iloc[0]["lag_52"] == weekly["n_registrations"].iloc[-52]
 
 
@@ -84,6 +87,7 @@ def test_build_feature_row_uses_latest_legalform_shares() -> None:
 
 # ── integration: predict_week ─────────────────────────────────────────────────
 
+
 @pytest.fixture()
 def trained_run(tmp_path) -> tuple[str, str]:
     """Train models with a local MLflow store; return (run_id, tracking_uri)."""
@@ -102,7 +106,10 @@ def trained_run(tmp_path) -> tuple[str, str]:
 def test_predict_week_returns_expected_keys(trained_run) -> None:
     run_id, tracking_uri = trained_run
     result = predict_week(
-        2021, 45, run_id=run_id, tracking_uri=tracking_uri,
+        2021,
+        45,
+        run_id=run_id,
+        tracking_uri=tracking_uri,
         df=_synthetic_raw(),
     )
     assert set(result.keys()) == {"p10", "p50", "p90", "run_id"}
@@ -111,15 +118,13 @@ def test_predict_week_returns_expected_keys(trained_run) -> None:
 
 def test_predict_week_quantile_ordering(trained_run) -> None:
     run_id, tracking_uri = trained_run
-    result = predict_week(2021, 45, run_id=run_id, tracking_uri=tracking_uri,
-                          df=_synthetic_raw())
+    result = predict_week(2021, 45, run_id=run_id, tracking_uri=tracking_uri, df=_synthetic_raw())
     assert result["p10"] <= result["p50"] <= result["p90"]
 
 
 def test_predict_week_non_negative(trained_run) -> None:
     run_id, tracking_uri = trained_run
-    result = predict_week(2021, 45, run_id=run_id, tracking_uri=tracking_uri,
-                          df=_synthetic_raw())
+    result = predict_week(2021, 45, run_id=run_id, tracking_uri=tracking_uri, df=_synthetic_raw())
     assert result["p10"] >= 0.0
     assert result["p50"] >= 0.0
     assert result["p90"] >= 0.0

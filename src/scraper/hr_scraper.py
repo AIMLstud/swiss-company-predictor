@@ -15,16 +15,14 @@ from datetime import date, datetime
 from urllib.parse import urlparse
 
 import requests
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Tag
 
 
 class ViewStateMissingError(Exception):
     """Raised when javax.faces.ViewState is not found in the page HTML."""
 
 
-_DATE_RE = re.compile(
-    r"Eingetragen am</span>\s*<span>(\d{2}\.\d{2}\.\d{4})</span>"
-)
+_DATE_RE = re.compile(r"Eingetragen am</span>\s*<span>(\d{2}\.\d{2}\.\d{4})</span>")
 
 _BROWSER_HEADERS: dict[str, str] = {
     "User-Agent": (
@@ -79,7 +77,7 @@ def scrape_eintragsdatum_from_url(
 
     soup = BeautifulSoup(r1.text, "html.parser")
     vs_el = soup.find("input", {"name": "javax.faces.ViewState"})
-    if not vs_el:
+    if not vs_el or not isinstance(vs_el, Tag):
         raise ViewStateMissingError(f"No ViewState found at {url!r}")
     view_state: str = str(vs_el.get("value", ""))
 

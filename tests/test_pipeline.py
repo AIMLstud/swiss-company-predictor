@@ -1,7 +1,6 @@
 from datetime import date
 from unittest.mock import MagicMock, patch
 
-import pytest
 import requests
 
 from common.config import Settings
@@ -44,6 +43,7 @@ _URL = "https://lu.chregister.ch/cr-portal/auszug/auszug.xhtml?uid=CHE-107.251.5
 
 # ── stage1_full_sync ──────────────────────────────────────────────────────────
 
+
 def test_stage1_calls_search_for_each_prefix() -> None:
     with patch("scraper.pipeline.search_by_name_prefix", return_value=[]) as mock_search:
         stage1_full_sync(_session(), settings=_cfg(), _sleep=lambda _: None)
@@ -51,8 +51,10 @@ def test_stage1_calls_search_for_each_prefix() -> None:
 
 
 def test_stage1_returns_total_upserted() -> None:
-    with patch("scraper.pipeline.search_by_name_prefix", return_value=[_COMPANY, _COMPANY]), \
-         patch("scraper.pipeline.fetch_detail", return_value=[_COMPANY]):
+    with (
+        patch("scraper.pipeline.search_by_name_prefix", return_value=[_COMPANY, _COMPANY]),
+        patch("scraper.pipeline.fetch_detail", return_value=[_COMPANY]),
+    ):
         total = stage1_full_sync(_session(), settings=_cfg(), _sleep=lambda _: None)
     assert total == 52  # 2 companies × 1 detail × 26 prefixes
 
@@ -66,6 +68,7 @@ def test_stage1_sleeps_after_each_prefix() -> None:
 
 
 # ── stage2_scrape_eintragsdatum ────────────────────────────────────────────────
+
 
 def test_stage2_records_ok() -> None:
     session = _session(rows=[("CHE107251578", _URL)])
@@ -119,6 +122,7 @@ def test_stage2_upserts_eintragsdatum_row() -> None:
 
 # ── stage3_daily_sync ─────────────────────────────────────────────────────────
 
+
 def test_stage3_upserts_new_companies() -> None:
     with (
         patch("scraper.pipeline.fetch_publications_by_date", return_value=[{}]),
@@ -136,9 +140,7 @@ def test_stage3_fetches_for_correct_date() -> None:
         patch("scraper.pipeline.fetch_publications_by_date", return_value=[]) as mock_fetch,
         patch("scraper.pipeline.filter_new_entries_for_canton", return_value=[]),
     ):
-        stage3_daily_sync(
-            _session(), date(2026, 1, 7), settings=_cfg(), _sleep=lambda _: None
-        )
+        stage3_daily_sync(_session(), date(2026, 1, 7), settings=_cfg(), _sleep=lambda _: None)
     mock_fetch.assert_called_once_with(date(2026, 1, 7))
 
 

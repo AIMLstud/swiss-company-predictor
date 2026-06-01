@@ -31,14 +31,18 @@ def _build_feature_row(
         )
 
     counts = preceding["n_registrations"]
-    return pd.DataFrame([{
-        "iso_week":   target_week,
-        "lag_1":      counts.iloc[-1],
-        "lag_4":      counts.iloc[-4],
-        "lag_52":     counts.iloc[-52],
-        "ag_share":   preceding["ag_share"].iloc[-1],
-        "gmbh_share": preceding["gmbh_share"].iloc[-1],
-    }])
+    return pd.DataFrame(
+        [
+            {
+                "iso_week": target_week,
+                "lag_1": counts.iloc[-1],
+                "lag_4": counts.iloc[-4],
+                "lag_52": counts.iloc[-52],
+                "ag_share": preceding["ag_share"].iloc[-1],
+                "gmbh_share": preceding["gmbh_share"].iloc[-1],
+            }
+        ]
+    )
 
 
 def _get_latest_run_id(experiment_name: str, tracking_uri: str) -> str:
@@ -46,7 +50,7 @@ def _get_latest_run_id(experiment_name: str, tracking_uri: str) -> str:
     import mlflow
 
     mlflow.set_tracking_uri(tracking_uri)
-    runs = mlflow.search_runs(
+    runs: pd.DataFrame = mlflow.search_runs(  # type: ignore[assignment]
         experiment_names=[experiment_name],
         filter_string="status = 'FINISHED'",
         order_by=["start_time DESC"],
@@ -100,8 +104,8 @@ def predict_week(
     p90 = mlflow.sklearn.load_model(tags["model_uri_p90"])
 
     return {
-        "p10":    max(0.0, float(p10.predict(X)[0])),
-        "p50":    max(0.0, float(p50.predict(X)[0])),
-        "p90":    max(0.0, float(p90.predict(X)[0])),
+        "p10": max(0.0, float(p10.predict(X)[0])),
+        "p50": max(0.0, float(p50.predict(X)[0])),
+        "p90": max(0.0, float(p90.predict(X)[0])),
         "run_id": run_id,
     }

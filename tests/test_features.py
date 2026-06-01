@@ -27,6 +27,7 @@ def _weekly_rows(n: int, n_per_week: int = 1) -> pd.DataFrame:
 
 # ── aggregate_weekly ──────────────────────────────────────────────────────────
 
+
 def test_aggregate_row_count() -> None:
     result = aggregate_weekly(_csv())
     # fixture has 4 distinct ISO weeks
@@ -53,7 +54,7 @@ def test_aggregate_gmbh_share() -> None:
 
 def test_aggregate_sorted_ascending() -> None:
     result = aggregate_weekly(_csv())
-    keys = list(zip(result["iso_year"], result["iso_week"]))
+    keys = list(zip(result["iso_year"], result["iso_week"], strict=True))
     assert keys == sorted(keys)
 
 
@@ -66,10 +67,12 @@ def test_aggregate_kw53() -> None:
 
 
 def test_aggregate_null_legalform_counted_but_not_ag_gmbh() -> None:
-    df = pd.DataFrame({
-        "eintragsdatum": ["2024-01-08", "2024-01-08"],
-        "legalform_short": ["AG", None],
-    })
+    df = pd.DataFrame(
+        {
+            "eintragsdatum": ["2024-01-08", "2024-01-08"],
+            "legalform_short": ["AG", None],
+        }
+    )
     result = aggregate_weekly(df)
     assert result.iloc[0]["n_registrations"] == 2
     assert pytest.approx(result.iloc[0]["ag_share"]) == 0.5
@@ -77,6 +80,7 @@ def test_aggregate_null_legalform_counted_but_not_ag_gmbh() -> None:
 
 
 # ── add_lag_features ──────────────────────────────────────────────────────────
+
 
 def test_add_lag_values() -> None:
     weekly = aggregate_weekly(_weekly_rows(5, n_per_week=3))
@@ -94,6 +98,7 @@ def test_add_lag_first_rows_nan() -> None:
 
 
 # ── build_feature_matrix ──────────────────────────────────────────────────────
+
 
 def test_build_feature_matrix_drops_insufficient_history() -> None:
     # 4 weeks is not enough to compute lag_52

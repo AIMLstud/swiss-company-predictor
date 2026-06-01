@@ -15,15 +15,18 @@ st.set_page_config(
 
 # ── Cached data helpers ───────────────────────────────────────────────────────
 
+
 @st.cache_data(ttl=3600)
 def load_raw() -> object:
     from training.train import load_data
+
     return load_data()
 
 
 @st.cache_data(ttl=3600)
 def load_weekly(_raw_df) -> object:
     from features.aggregation import aggregate_weekly
+
     return aggregate_weekly(_raw_df)
 
 
@@ -53,9 +56,9 @@ def get_prediction(year: int, week: int, _weekly_df) -> dict:
     p90 = mlflow.sklearn.load_model(tags["model_uri_p90"])
 
     return {
-        "p10":    max(0.0, float(p10.predict(X)[0])),
-        "p50":    max(0.0, float(p50.predict(X)[0])),
-        "p90":    max(0.0, float(p90.predict(X)[0])),
+        "p10": max(0.0, float(p10.predict(X)[0])),
+        "p50": max(0.0, float(p50.predict(X)[0])),
+        "p90": max(0.0, float(p90.predict(X)[0])),
         "run_id": run_id,
     }
 
@@ -69,9 +72,11 @@ def _current_iso_week() -> tuple[int, int]:
 
 st.sidebar.title("Konfiguration")
 default_year, default_week = _current_iso_week()
-target_year  = int(st.sidebar.number_input("Jahr", min_value=2020, max_value=2030, value=default_year))
-target_week  = int(st.sidebar.number_input("KW",   min_value=1,    max_value=53,   value=default_week))
-n_history    = st.sidebar.slider("Historische Wochen (Grafik)", 26, 156, 52)
+target_year = int(
+    st.sidebar.number_input("Jahr", min_value=2020, max_value=2030, value=default_year)
+)
+target_week = int(st.sidebar.number_input("KW", min_value=1, max_value=53, value=default_week))
+n_history = st.sidebar.slider("Historische Wochen (Grafik)", 26, 156, 52)
 
 # ── Header ────────────────────────────────────────────────────────────────────
 
@@ -98,8 +103,8 @@ if weekly is not None:
             result = get_prediction(target_year, target_week, weekly)
             col1, col2, col3 = st.columns(3)
             col1.metric("P10 – untere Grenze", f"{result['p10']:.1f}")
-            col2.metric("P50 – Median",        f"{result['p50']:.1f}")
-            col3.metric("P90 – obere Grenze",  f"{result['p90']:.1f}")
+            col2.metric("P50 – Median", f"{result['p50']:.1f}")
+            col3.metric("P90 – obere Grenze", f"{result['p90']:.1f}")
             st.caption(f"MLflow Run-ID: `{result['run_id']}`")
         except ValueError as exc:
             st.warning(f"Nicht genug History für diese Woche: {exc}")
@@ -115,24 +120,20 @@ st.subheader("Historische Registrierungen")
 if weekly is not None and not weekly.empty:
     import plotly.graph_objects as go
 
-    tail = (
-        weekly.sort_values(["iso_year", "iso_week"])
-        .tail(n_history)
-        .copy()
-    )
-    tail["label"] = tail.apply(
-        lambda r: f"{int(r.iso_year)}-W{int(r.iso_week):02d}", axis=1
-    )
+    tail = weekly.sort_values(["iso_year", "iso_week"]).tail(n_history).copy()
+    tail["label"] = tail.apply(lambda r: f"{int(r.iso_year)}-W{int(r.iso_week):02d}", axis=1)
 
     fig = go.Figure()
-    fig.add_trace(go.Scatter(
-        x=tail["label"],
-        y=tail["n_registrations"],
-        mode="lines+markers",
-        name="Registrierungen",
-        line={"color": "#1f77b4"},
-        marker={"size": 4},
-    ))
+    fig.add_trace(
+        go.Scatter(
+            x=tail["label"],
+            y=tail["n_registrations"],
+            mode="lines+markers",
+            name="Registrierungen",
+            line={"color": "#1f77b4"},
+            marker={"size": 4},
+        )
+    )
     fig.update_layout(
         xaxis_title="ISO-Woche",
         yaxis_title="Anzahl Registrierungen",
@@ -145,7 +146,7 @@ if weekly is not None and not weekly.empty:
 
     last = weekly.sort_values(["iso_year", "iso_week"]).iloc[-1]
     col_ag, col_gmbh = st.columns(2)
-    col_ag.metric("AG-Anteil (letzte Woche)",   f"{last['ag_share']:.1%}")
+    col_ag.metric("AG-Anteil (letzte Woche)", f"{last['ag_share']:.1%}")
     col_gmbh.metric("GmbH-Anteil (letzte Woche)", f"{last['gmbh_share']:.1%}")
 else:
     st.info("Keine historischen Daten verfügbar.")

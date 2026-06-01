@@ -13,11 +13,13 @@ def aggregate_weekly(df: pd.DataFrame) -> pd.DataFrame:
     dates = pd.to_datetime(df["eintragsdatum"])
     iso = dates.dt.isocalendar()
 
-    temp = pd.DataFrame({
-        "iso_year": iso["year"].astype(int),
-        "iso_week": iso["week"].astype(int),
-        "lf": df["legalform_short"].str.upper().fillna(""),
-    })
+    temp = pd.DataFrame(
+        {
+            "iso_year": iso["year"].astype(int),
+            "iso_week": iso["week"].astype(int),
+            "lf": df["legalform_short"].str.upper().fillna(""),
+        }
+    )
     temp["is_ag"] = (temp["lf"] == "AG").astype(int)
     temp["is_gmbh"] = (temp["lf"] == "GMBH").astype(int)
 

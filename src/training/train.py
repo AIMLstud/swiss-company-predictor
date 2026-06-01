@@ -4,15 +4,19 @@ from __future__ import annotations
 
 import tempfile
 
-import numpy as np
 import pandas as pd
 
 FEATURE_COLS: list[str] = [
-    "iso_week", "lag_1", "lag_4", "lag_52", "ag_share", "gmbh_share",
+    "iso_week",
+    "lag_1",
+    "lag_4",
+    "lag_52",
+    "ag_share",
+    "gmbh_share",
 ]
 TARGET_COL = "n_registrations"
 
-_XGB_PARAMS: dict = {
+_XGB_PARAMS: dict[str, object] = {
     "n_estimators": 200,
     "max_depth": 4,
     "learning_rate": 0.05,
@@ -22,7 +26,7 @@ _XGB_PARAMS: dict = {
     "n_jobs": -1,
 }
 
-_GBM_PARAMS: dict = {
+_GBM_PARAMS: dict[str, object] = {
     "n_estimators": 200,
     "max_depth": 4,
     "learning_rate": 0.05,
@@ -92,29 +96,33 @@ def run_training(
 
     X_train = split.train[FEATURE_COLS].to_numpy()
     y_train = split.train[TARGET_COL].to_numpy()
-    X_val   = split.val[FEATURE_COLS].to_numpy()
-    y_val   = split.val[TARGET_COL].to_numpy()
+    X_val = split.val[FEATURE_COLS].to_numpy()
+    y_val = split.val[TARGET_COL].to_numpy()
 
     with mlflow.start_run() as run:
-        mlflow.log_params({
-            "val_start":  str(val_start),
-            "test_start": str(test_start),
-            "n_train":    len(split.train),
-            "n_val":      len(split.val),
-            "n_test":     len(split.test),
-            "features":   ",".join(FEATURE_COLS),
-            **{f"xgb_{k}": v for k, v in _XGB_PARAMS.items()},
-        })
+        mlflow.log_params(
+            {
+                "val_start": str(val_start),
+                "test_start": str(test_start),
+                "n_train": len(split.train),
+                "n_val": len(split.val),
+                "n_test": len(split.test),
+                "features": ",".join(FEATURE_COLS),
+                **{f"xgb_{k}": v for k, v in _XGB_PARAMS.items()},
+            }
+        )
 
         if len(split.val) > 0:
             for label, result in [
-                ("lag1",  lag1_baseline(split.val)),
+                ("lag1", lag1_baseline(split.val)),
                 ("lag52", lag52_baseline(split.val)),
             ]:
-                mlflow.log_metrics({
-                    f"baseline_{label}_mae":  result.mae,
-                    f"baseline_{label}_rmse": result.rmse,
-                })
+                mlflow.log_metrics(
+                    {
+                        f"baseline_{label}_mae": result.mae,
+                        f"baseline_{label}_rmse": result.rmse,
+                    }
+                )
 
         # ── p50: XGBoost point estimate ───────────────────────────────────
         p50 = xgb.XGBRegressor(**_XGB_PARAMS)
@@ -147,4 +155,4 @@ def run_training(
         # store model URIs as tags so predict.py can load them by run_id
         mlflow.set_tags(model_uris)
 
-    return run.info.run_id
+    return str(run.info.run_id)

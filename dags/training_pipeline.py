@@ -18,8 +18,8 @@ from airflow.decorators import dag, task
     catchup=False,
     max_active_runs=1,
     params={
-        "val_weeks":       52,
-        "test_weeks":      4,
+        "val_weeks": 52,
+        "test_weeks": 4,
         "experiment_name": "swiss_company_predictor",
     },
     tags=["training"],
@@ -34,10 +34,12 @@ def training_pipeline() -> None:
         from common.db import get_session
 
         with get_session() as session:
-            row = session.execute(text("""
+            row = session.execute(
+                text("""
                 SELECT COUNT(*) FROM raw.company_eintragsdatum
                 WHERE scraping_status = 'ok'
-            """)).fetchone()
+            """)
+            ).fetchone()
 
         n = int(row[0]) if row else 0
         if n < 100:
@@ -57,7 +59,7 @@ def training_pipeline() -> None:
         from training.split import rolling_boundaries
         from training.train import run_training
 
-        ctx    = get_current_context()
+        ctx = get_current_context()
         params = ctx["params"]
 
         val_start, test_start = rolling_boundaries(

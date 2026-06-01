@@ -1,13 +1,10 @@
 from datetime import date, timedelta
 
-import numpy as np
 import pandas as pd
 import pytest
 
-import pytest
-
-from training.baseline import Metrics, lag1_baseline, lag52_baseline
-from training.train import FEATURE_COLS, TARGET_COL, run_training
+from training.baseline import lag1_baseline, lag52_baseline
+from training.train import run_training
 
 
 @pytest.fixture(autouse=True)
@@ -19,13 +16,16 @@ def _training_env(monkeypatch: pytest.MonkeyPatch) -> None:
 
 # ── helpers ───────────────────────────────────────────────────────────────────
 
+
 def _baseline_df() -> pd.DataFrame:
     """Small weekly DataFrame with known lag values for baseline assertions."""
-    return pd.DataFrame({
-        "n_registrations": [10, 12, 15, 8],
-        "lag_1":           [8,  10, 12, 15],
-        "lag_52":          [9,  11, 14,  7],
-    })
+    return pd.DataFrame(
+        {
+            "n_registrations": [10, 12, 15, 8],
+            "lag_1": [8, 10, 12, 15],
+            "lag_52": [9, 11, 14, 7],
+        }
+    )
 
 
 def _synthetic_raw(n: int = 120) -> pd.DataFrame:
@@ -40,6 +40,7 @@ def _synthetic_raw(n: int = 120) -> pd.DataFrame:
 
 
 # ── baseline metrics ──────────────────────────────────────────────────────────
+
 
 def test_lag1_mae_correct() -> None:
     df = _baseline_df()
@@ -67,6 +68,7 @@ def test_rmse_gte_mae() -> None:
 
 
 # ── run_training integration ──────────────────────────────────────────────────
+
 
 def test_run_training_returns_run_id(tmp_path) -> None:
     run_id = run_training(

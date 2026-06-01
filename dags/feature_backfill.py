@@ -13,7 +13,7 @@ from airflow.decorators import dag, task
 
 @dag(
     dag_id="feature_backfill",
-    schedule=None,          # one-shot: trigger manually
+    schedule=None,  # one-shot: trigger manually
     start_date=datetime(2025, 1, 1),
     catchup=False,
     tags=["scraper", "features"],
@@ -36,14 +36,13 @@ def feature_backfill() -> None:
         seed = Path(cfg.seed_csv_path)
 
         if seed.exists():
-            df = (
-                pd.read_csv(seed, low_memory=False)
-                .rename(columns={
+            df = pd.read_csv(seed, low_memory=False).rename(
+                columns={
                     "name_detail": "name",
                     "legalForm.id_detail": "legalform_id",
                     "legalForm.shortName.de_detail": "legalform_short",
                     "status_detail": "status",
-                })
+                }
             )
             df = df[df["canton"] == cfg.zefix_canton].copy()
 
@@ -55,7 +54,9 @@ def feature_backfill() -> None:
                 {
                     "uid": row["uid"],
                     "name": _v(row, "name") or "",
-                    "legalform_id": int(row["legalform_id"]) if pd.notna(row.get("legalform_id")) else None,
+                    "legalform_id": int(row["legalform_id"])
+                    if pd.notna(row.get("legalform_id"))
+                    else None,
                     "legalform_short": _v(row, "legalform_short"),
                     "status": _v(row, "status"),
                     "canton": _v(row, "canton"),

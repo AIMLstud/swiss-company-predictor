@@ -23,18 +23,16 @@ class Settings(BaseSettings):
 
     # ── Pipeline knobs ────────────────────────────────────────────────────────
     zefix_canton: str = "LU"
-    zefix_sleep_between: float = 0.1   # seconds between Zefix API calls
-    hr_sleep_between: float = 0.2      # seconds between HR-Auszug calls
-    hr_concurrency: int = 4            # parallel HR scraping workers
-    hr_max_retries: int = 3            # retries on transient errors
+    zefix_sleep_between: float = 0.1  # seconds between Zefix API calls
+    hr_sleep_between: float = 0.2  # seconds between HR-Auszug calls
+    hr_concurrency: int = 4  # parallel HR scraping workers
+    hr_max_retries: int = 3  # retries on transient errors
 
     # ── Backfill seed CSV (optional) ──────────────────────────────────────────
     # If this file exists, the backfill DAG loads it directly instead of
     # running the full ~8h live scrape.
-    seed_csv_path: Path = Path(
-        "tests/fixtures/260517_full_zefix_export_eintragsdatum.csv"
-    )
+    seed_csv_path: Path = Path("tests/fixtures/260517_full_zefix_export_eintragsdatum.csv")
 
 
 def get_settings() -> Settings:
-    return Settings()
+    return Settings()  # type: ignore[call-arg]

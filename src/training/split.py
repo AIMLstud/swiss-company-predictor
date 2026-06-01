@@ -18,7 +18,7 @@ def rolling_boundaries(
     train = everything before val (grows automatically as new data arrives)
     """
     test_start_date = reference - timedelta(weeks=test_weeks)
-    val_start_date  = test_start_date - timedelta(weeks=val_weeks)
+    val_start_date = test_start_date - timedelta(weeks=val_weeks)
     tc = test_start_date.isocalendar()
     vc = val_start_date.isocalendar()
     return (vc.year, vc.week), (tc.year, tc.week)
