@@ -51,9 +51,10 @@ def test_stage1_calls_search_for_each_prefix() -> None:
 
 
 def test_stage1_returns_total_upserted() -> None:
-    with patch("scraper.pipeline.search_by_name_prefix", return_value=[_COMPANY, _COMPANY]):
+    with patch("scraper.pipeline.search_by_name_prefix", return_value=[_COMPANY, _COMPANY]), \
+         patch("scraper.pipeline.fetch_detail", return_value=[_COMPANY]):
         total = stage1_full_sync(_session(), settings=_cfg(), _sleep=lambda _: None)
-    assert total == 52  # 2 companies × 26 prefixes
+    assert total == 52  # 2 companies × 1 detail × 26 prefixes
 
 
 def test_stage1_sleeps_after_each_prefix() -> None:

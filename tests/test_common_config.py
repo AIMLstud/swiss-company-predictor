@@ -8,9 +8,11 @@ def test_defaults(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("APP_DB_URL", "postgresql+psycopg://u:p@localhost/db")
     monkeypatch.setenv("ZEFIX_USERNAME", "user")
     monkeypatch.setenv("ZEFIX_PASSWORD", "pass")
+    monkeypatch.delenv("ZEFIX_SLEEP_BETWEEN", raising=False)
+    monkeypatch.delenv("HR_SLEEP_BETWEEN", raising=False)
     s = Settings(_env_file=None)
     assert s.zefix_canton == "LU"
-    assert s.zefix_sleep_between == 0.3
+    assert s.zefix_sleep_between == 0.1
     assert s.hr_sleep_between == 0.2
     assert s.hr_concurrency == 4
     assert s.hr_max_retries == 3
