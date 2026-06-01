@@ -2,7 +2,7 @@
 
 Predicts the number of new company registrations per calendar week in Canton Lucerne (CH), with 80% prediction intervals (p10 / p50 / p90).
 
-Data source: [Zefix REST API](https://www.zefix.admin.ch/ZefixPublicREST/) + Cantonal Commercial Register (HR-Auszug).
+Data source: [Zefix REST API](https://www.zefix.admin.ch/ZefixPublicREST/) + [Handelsregister Lucerne](https://lu.chregister.ch/).
 
 [![CI](https://github.com/AIMLstud/swiss-company-predictor/actions/workflows/ci.yml/badge.svg)](https://github.com/AIMLstud/swiss-company-predictor/actions/workflows/ci.yml)
 
@@ -10,9 +10,26 @@ Data source: [Zefix REST API](https://www.zefix.admin.ch/ZefixPublicREST/) + Can
 
 ## Architecture (FTI Pipeline)
 
+![FTI Architecture](docs/architecture.png)
+
+The project follows the **FTI (Feature / Training / Inference)** architecture — three decoupled pipelines:
+
+**1. Feature Pipeline**
+Airflow DAGs fetch raw data from the Zefix API and [Handelsregister Lucerne](https://lu.chregister.ch/) and store it in PostgreSQL (`raw.companies`, `raw.company_eintragsdatum`). The backfill runs once to seed all historical data; the daily sync keeps it up to date every weekday.
+
+**2. Training Pipeline**
+Every Sunday, Airflow reads from PostgreSQL, builds the feature matrix in memory (weekly registration counts, lag features, legal form shares), splits the data using a rolling time window, trains three XGBoost/GBM models (p10/p50/p90), and logs everything — parameters, metrics, and model artifacts — to MLflow.
+
+**3. Inference Pipeline**
+The Streamlit dashboard loads the latest model run from MLflow and serves predictions on demand. The user selects a target week and gets a point estimate (p50) with an 80% prediction interval (p10/p90).
+
+The three pipelines are fully decoupled — the feature pipeline only writes to PostgreSQL, the training pipeline only reads from it, and the inference pipeline only reads from MLflow. Each can fail, restart, or be triggered independently without affecting the others.
+
+---
+
 ```
 Zefix REST API ──► feature_backfill (manual)
-SOGC RSS feed  ──► feature_daily_sync (@daily)  ──► PostgreSQL (raw.*)
+SOGC RSS feed  ──► feature_daily_sync (Mon–Fri) ──► PostgreSQL (raw.*)
                                                          │
                                         training_pipeline (@weekly)
                                                  │
@@ -58,21 +75,19 @@ Three models are trained in each weekly run and stored in MLflow:
 
 - Docker ≥ 24 and Docker Compose V2
 - [uv](https://docs.astral.sh/uv/) ≥ 0.5
+- Access to the [Zefix REST API](https://www.zefix.admin.ch/ZefixPublicREST/) (requires registration at [zefix.admin.ch](https://www.zefix.admin.ch))
 
 ---
 
 ## Quick Start
 
 ```bash
+git clone https://github.com/AIMLstud/swiss-company-predictor.git
+cd swiss-company-predictor
 cp .env.example .env
 ```
 
-Open `.env` and fill in the three required values:
-- `ZEFIX_USERNAME` / `ZEFIX_PASSWORD` — your Zefix API credentials
-- `AIRFLOW__CORE__FERNET_KEY` — generate one with:
-  ```bash
-  python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
-  ```
+Open `.env` and fill in the required values — see `.env.example` for all variables and instructions (including how to generate `AIRFLOW__CORE__FERNET_KEY`).
 
 ```bash
 docker compose up -d
@@ -106,16 +121,17 @@ Default login credentials are the same as in `.env.example`.
 
 ---
 
-### Seeding historical data (optional, recommended)
+### Seeding historical data (dev only)
 
-Running the live backfill scrapes ~35k companies from HR-Auszug and takes ~8h.
-To skip this, place the seed CSV in `tests/fixtures/` before triggering the DAG:
+> **Not recommended for production.** The live backfill via the Zefix API and [Handelsregister Lucerne](https://lu.chregister.ch/) is the correct way to populate the database. The CSV seed below is intended for local development only to avoid waiting ~8h for the full scrape.
+
+The seed CSV is not included in the repository and must be requested from the repo owner. Once obtained, place it in `tests/fixtures/` before triggering the DAG:
 
 ```bash
 cp /path/to/260517_full_zefix_export_eintragsdatum.csv tests/fixtures/
 ```
 
-The `feature_backfill` DAG detects this file and loads it directly.
+The `feature_backfill` DAG detects this file and loads it directly instead of scraping live.
 
 ### First-time pipeline run
 
@@ -161,21 +177,23 @@ print(result)  # {"p10": 12.3, "p50": 18.7, "p90": 24.1, "run_id": "..."}
 
 ```
 src/
-  common/        config, db helpers
-  scraper/       zefix_client, sogc_client, hr_scraper, pipeline
+  common/        config, db, http retry, logging
+  scraper/       zefix_client, sogc_client, hr_scraper, pipeline, uid_format
   features/      aggregation, feature_builder
   training/      split, baseline, train
   inference/     predict
 dags/
-  feature_backfill.py       manual, seeds raw data
-  feature_daily_sync.py     @daily, incremental sync
-  training_pipeline.py      @weekly, trains + logs models
+  feature_backfill.py       manual, seeds raw data from Zefix + Handelsregister
+  feature_daily_sync.py     Mon–Fri, incremental SOGC sync
+  training_pipeline.py      @weekly (Sunday), trains + logs models to MLflow
 streamlit_app/
-  app.py                    Streamlit UI
-sql/init/                   PostgreSQL schema (raw.*)
-docker/                     Dockerfiles per service
-tests/                      unit + integration tests
-  fixtures/                 weekly_sample.csv, seed CSV (optional)
+  app.py                    Streamlit UI (predictions dashboard)
+sql/init/                   PostgreSQL schema (raw schema only)
+docker/                     Dockerfiles per service (airflow, mlflow, streamlit)
+pgadmin/
+  servers.json              pre-configured pgAdmin server connection
+tests/                      unit tests with fixtures
+references/                 Jupyter notebooks used during development only
 ```
 
 ---
