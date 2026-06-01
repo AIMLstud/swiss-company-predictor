@@ -87,6 +87,25 @@ docker compose up -d
 
 > **macOS users:** AirPlay Receiver occupies port 5000 by default, which prevents MLflow from starting. Disable it under **System Settings → General → AirDrop & Handoff → AirPlay Receiver**.
 
+---
+
+## Live Deployment (Azure)
+
+The full stack is deployed on an Ubuntu Server on Microsoft Azure using the same `docker compose up -d` setup. An [Nginx Proxy Manager](https://nginxproxymanager.com/) (NPM) sits in front of all services to handle HTTPS via Let's Encrypt certificates.
+
+| Service   | URL                                          |
+|-----------|----------------------------------------------|
+| MLflow    | https://mlflow.swiss-company-predictor.ch    |
+| pgAdmin   | https://pgadmin.swiss-company-predictor.ch   |
+| Airflow   | https://airflow.swiss-company-predictor.ch   |
+| Streamlit | https://ui.swiss-company-predictor.ch        |
+
+Default login credentials are the same as in `.env.example`.
+
+> **Note:** When configuring NPM, use the Docker **service name** (e.g. `pgadmin`, `mlflow`) as the forward hostname — not `localhost` — since NPM runs in its own container on the same `docker-net` network.
+
+---
+
 ### Seeding historical data (optional, recommended)
 
 Running the live backfill scrapes ~35k companies from HR-Auszug and takes ~8h.
