@@ -50,12 +50,13 @@ def _get_latest_run_id(experiment_name: str, tracking_uri: str) -> str:
     import mlflow
 
     mlflow.set_tracking_uri(tracking_uri)
-    runs: pd.DataFrame = mlflow.search_runs(  # type: ignore[assignment]
+    runs = mlflow.search_runs(
         experiment_names=[experiment_name],
         filter_string="status = 'FINISHED'",
         order_by=["start_time DESC"],
         max_results=1,
     )
+    assert isinstance(runs, pd.DataFrame)
     if runs.empty:
         raise ValueError(f"No finished MLflow runs found in experiment '{experiment_name}'.")
     return str(runs.iloc[0]["run_id"])
